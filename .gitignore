@@ -1,0 +1,22 @@
+# Claude Code session data (runtime, not version controlled)
+.claude/sessions/
+
+# Credentials and secrets
+.env
+.env.*
+*.key
+*.pem
+credentials.json
+*-creds
+*-creds.*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
