@@ -258,15 +258,15 @@ This is the Company OS for **{{company_name}}**. It gives Claude full business c
 
 | User Intent | Skill File | Description |
 |-------------|-----------|-------------|
-| "Write a cold email" | skills/outbound-copywriter.md | Cold email sequences using the SPARK framework |
-| "Draft a LinkedIn post" | skills/linkedin-post-writer.md | LinkedIn content in your brand voice |
-| "Build an ICP" | skills/icp-modeller.md | Ideal Customer Profile with scoring criteria |
-| "Design our GTM motion" | skills/gtm-strategist.md | Go-to-market strategy and channel planning |
-| "Prep me for a call" | skills/discovery-prep.md | Pre-call research briefs and conversation starters |
+| "Write a cold email" | gtm-skills/outbound-copywriter.md | Cold email sequences using the SPARK framework |
+| "Draft a LinkedIn post" | gtm-skills/linkedin-post-writer.md | LinkedIn content in your brand voice |
+| "Build an ICP" | gtm-skills/icp-modeller.md | Ideal Customer Profile with scoring criteria |
+| "Design our GTM motion" | gtm-skills/gtm-strategist.md | Go-to-market strategy and channel planning |
+| "Prep me for a call" | gtm-skills/discovery-prep.md | Pre-call research briefs and conversation starters |
 | {{intent_6}} | {{skill_path_6}} | {{skill_description_6}} |
 
 <!-- HOW TO CREATE A SKILL:
-     1. Create a .md file in skills/ (e.g., skills/my-new-skill.md)
+     1. Create a .md file in gtm-skills/ (e.g., gtm-skills/my-new-skill.md)
      2. Include: trigger conditions, steps, quality criteria, examples
      3. Add it to this routing table so Claude knows when to use it
      4. Or just ask Claude: "Help me create a skill for [your task]"
@@ -301,7 +301,7 @@ company-os/
 │   ├── voice.md
 │   └── design-system.md
 ├── wiki/                  # Reference, playbooks, SOPs, deep-dives
-├── skills/                # AI skill definitions
+├── gtm-skills/            # AI skill definitions (5 starters included)
 ├── archive/               # Completed projects, historical docs
 └── raw/                   # Input sources (transcripts, exports)
 ```
@@ -409,7 +409,7 @@ Use `.claude/rules/` for rules that only apply to certain file types or director
 - [ ] Create company/overview.md with your company background
 - [ ] Create company/voice.md with your writing style guidelines
 - [ ] Set up at least one MCP server (GitHub is the easiest starting point)
-- [ ] Create your first custom skill in skills/ (pick your most repeated task)
+- [ ] Create your first custom skill in gtm-skills/ (pick your most repeated task)
 - [ ] Add your safety guard rules for any connected tools
 - [ ] Test: ask Claude "What do you know about us?" and verify it answers correctly
 - [ ] Iterate: add more context files as you notice gaps

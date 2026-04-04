@@ -1,0 +1,10 @@
+{
+  "name": "company-os",
+  "version": "1.0.0",
+  "description": "Structured workflow commands for planning, building, and reviewing work. Built on Compound Engineering by EveryInc.",
+  "author": {
+    "name": "Built on Compound Engineering by EveryInc"
+  },
+  "homepage": "https://github.com/EveryInc/compound-engineering-plugin",
+  "license": "MIT"
+}

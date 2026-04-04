@@ -1,6 +1,6 @@
 # Workflows Engineering Plugin
 
-How to install and use the structured workflow commands for Claude Code.
+Structured workflow commands for Claude Code. Included in this starter kit.
 
 ---
 
@@ -8,7 +8,16 @@ How to install and use the structured workflow commands for Claude Code.
 
 A plugin that adds structured commands for planning, building, and reviewing work. Instead of ad-hoc prompting, you get a repeatable pipeline: plan, execute, review.
 
-Built on top of [**Compound Engineering**](https://github.com/EveryInc/compound-engineering-plugin) by EveryInc. Huge credit to that team for the foundation. We adapted it for GTM use cases and added the swarm command for parallel execution.
+Built on top of [**Compound Engineering**](https://github.com/EveryInc/compound-engineering-plugin) by EveryInc. We took their excellent foundation and made improvements:
+
+**What we changed:**
+- Updated tool references to match current Claude Code capabilities (subagents, hooks, skills)
+- Added the `/workflows:swarm` command for parallel multi-agent execution
+- Improved plan deepening with parallel research agents
+- Removed deprecated tool calls and outdated patterns
+- Adapted prompts for non-engineering use cases (GTM, content, ops)
+
+The core workflow (plan, work, review, brainstorm, compound) is inherited from Compound Engineering. Credit to that team for building something genuinely useful.
 
 ---
 
@@ -27,11 +36,18 @@ Built on top of [**Compound Engineering**](https://github.com/EveryInc/compound-
 
 ## Installation
 
-```
-/install-marketplace Workflowsio/company-os
+The plugin is included in this starter kit under `plugin/`. To install it:
+
+**Option 1: Copy to your project**
+```bash
+cp -r plugin/ your-company-os/.claude/plugins/company-os/
 ```
 
-That's it. The commands are available immediately.
+**Option 2: Ask Claude**
+```
+Copy the plugin from the starter kit into my project
+and set it up so the /workflows commands work.
+```
 
 Agent swarms (`/workflows:swarm`) work best on the **Claude Max plan** due to parallel token usage. On lower plans, use `/workflows:plan` then `/workflows:work` sequentially.
 
@@ -44,36 +60,20 @@ Agent swarms (`/workflows:swarm`) work best on the **Claude Max plan** due to pa
 /workflows:plan "Build a cold email campaign targeting VP Sales at Series B SaaS"
 ```
 
-Claude researches your project, designs a plan, and presents it for approval.
-
 **Execute:**
 ```
 /workflows:work
 ```
-
-Picks up the plan and builds it phase by phase.
 
 **Review (optional):**
 ```
 /workflows:review
 ```
 
-Spawns review agents for architecture, security, performance, and simplicity.
-
 **Or do it all at once:**
 ```
 /workflows:swarm "Build a cold email campaign targeting VP Sales at Series B SaaS"
 ```
-
-Runs plan, deepen, work, review in sequence. Parallelizes where possible.
-
----
-
-## When to Use Swarms
-
-Use `/workflows:swarm` for complex tasks that touch multiple files or systems. Campaign launches, content batches, large refactors, multi-step builds.
-
-Don't use swarms for small changes (single file fix, config update) or tasks that are inherently sequential. Just use `/workflows:plan` + `/workflows:work` instead.
 
 ---
 
