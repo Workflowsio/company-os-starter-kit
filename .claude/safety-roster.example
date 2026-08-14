@@ -1,0 +1,44 @@
+# Safety guard tier roster - EXAMPLE
+#
+# Copy this to one of the paths the guard reads, in this order:
+#   1. $SAFETY_GUARD_ROSTER          (whatever you point it at)
+#   2. .claude/safety-roster         (this project, gitignored)
+#   3. ~/.claude/safety-roster       (this machine, all projects)
+#
+#   cp .claude/safety-roster.example .claude/safety-roster
+#
+# The real file is gitignored on purpose. It carries who is trusted on this
+# machine, which is a per-machine decision and not a repository fact.
+#
+# A key that is PRESENT here REPLACES the built-in list for that tier rather
+# than extending it. That is what makes a promotion one line in one file. The
+# guard script is meant to be deployed byte-identically to every location your
+# runtime reads, so a promotion must never be an edit in N copies of a script.
+#
+# Identities are version-control committer emails, lowercased, compared exactly.
+# Check yours with: git config user.email
+#
+# An identity that is in neither list is on the team tier. An identity that does
+# not resolve at all is unresolved, which behaves the same as team on every cell
+# of the matrix: strictest, never friendliest. That is deliberate, because a
+# scheduled or unattended run is exactly the context where identity is missing.
+#
+# The tiers:
+#   owner    Built the system and carries the consequences. Gets a warning
+#            instead of a block on destructive internal actions, and a block on
+#            anything irreversible.
+#   trusted  Runs live work daily and is accountable for it. Confirms on
+#            everything guarded.
+#   (team)   Everyone else, including every unrecognised identity. Confirms on
+#            destructive internal work, needs two-person approval on anything
+#            irreversible. Not listed here, it is the default.
+
+owner: you@yourcompany.com
+trusted: revops-lead@yourcompany.com, ae-manager@yourcompany.com
+
+# Hostnames of the live systems you can reach from a shell. Any shell command
+# mentioning one of these is treated as an irreversible outward action, which
+# closes the hole where a blocked action is retried as a direct API call.
+# Leave this empty until you have real hostnames: a wrong entry here blocks a
+# working command, and a deny with false positives gets the gate switched off.
+guarded-hosts: api.yourcrm.example, api.youroutboundtool.example

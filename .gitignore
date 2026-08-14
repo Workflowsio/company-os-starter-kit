@@ -1,6 +1,10 @@
 # Claude Code session data (runtime, not version controlled)
 .claude/sessions/
 
+# Safety guard tier roster. Who is trusted is a per-machine decision, not a
+# repository fact. Commit .claude/safety-roster.example instead.
+.claude/safety-roster
+
 # Credentials and secrets
 .env
 .env.*

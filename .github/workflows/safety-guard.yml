@@ -1,0 +1,48 @@
+name: safety-guard
+
+# Fires every cell of the tier matrix at the gate and asserts the exit code and
+# the message. This exists because a safety gate verified by reading is not
+# verified: the policy the script intends and the policy it enforces diverge
+# more often than anyone expects, and the divergence is silent by construction.
+#
+# The push trigger is not redundant with the pull_request one. Repository admins
+# hold review-gate bypass by design, and a direct push that weakens the gate is
+# exactly the change nobody wants to discover from an incident.
+
+on:
+  pull_request:
+    paths:
+      - '.claude/hooks/safety-guard.sh'
+      - '.claude/hooks/safety-guard-test.sh'
+      - '.claude/settings.json'
+      - '.github/workflows/safety-guard.yml'
+  push:
+    # The default branch, by name. If yours is not called main, change it here.
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: safety-guard-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  matrix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # jq is the gate's one hard dependency. The gate fails closed without it,
+      # so a runner without jq would report a pass on a suite that never ran.
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Prove every cell of the matrix by execution
+        run: bash .claude/hooks/safety-guard-test.sh
+
+      # A published hash is the only checkable claim that the copies deployed to
+      # different machines are the same policy. Print it on every run so a
+      # reviewer can compare it against the one on their laptop.
+      - name: Publish the guard hash
+        run: sha256sum .claude/hooks/safety-guard.sh

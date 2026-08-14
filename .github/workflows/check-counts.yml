@@ -1,0 +1,82 @@
+name: check-counts
+
+# Rung 3 of the drift ladder: the review-time check. Read-only, runs when a change
+# is proposed, fails when the catalog drifts. Its whole value is that the author
+# sees the orphan before the change lands, which is the cheapest possible moment
+# to see it.
+#
+# TWO TRIGGERS, DOING TWO DIFFERENT JOBS.
+#
+# pull_request is prevention. push is coverage.
+#
+# The push trigger is not redundant, and this is the line to read before deleting
+# it. Repository admins hold review-gate bypass by design and nobody is going to
+# give that up. In the store this kit is modelled on, one direct push carried a
+# stale local copy of the catalog: it reverted a rename, dropped 6 skills and
+# resurrected a deleted one. The review-time check never saw any of it, because
+# the change never became a pull request. The commit body recorded that it was the
+# second time that exact shape had bitten. Do not remove the bypass. Cover it.
+
+on:
+  pull_request:
+  push:
+    # The default branch, by name. If yours is not called main, change it here.
+    # A trigger pointed at a branch that does not exist never fires and never
+    # errors, which is the same silent-disablement shape this whole kit is
+    # arguing against.
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: check-counts-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-counts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # No install step and no lockfile, because the script has no dependencies.
+      # A drift checker that can be broken by a registry outage is a drift checker
+      # that gets skipped.
+      - name: Check that every count matches disk
+        run: node scripts/refresh-counts.mjs --check
+
+  # WHAT A CLONER ACTUALLY GETS, which is not what the author is looking at.
+  #
+  # This job clones the committed tree into a scratch directory and runs the same
+  # checks from the clone. Everything untracked disappears in the clone, so a file
+  # that exists only in somebody's working copy fails here instead of shipping.
+  #
+  # The failure this covers is not hypothetical: a refresh of this kit reached the
+  # point of being ready to publish with 39 of its 75 files untracked. The README,
+  # the catalog and the root context file all described machinery a fresh clone did
+  # not contain, and every check the author ran passed, because every check ran
+  # against the working copy.
+  clone-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Clone the committed tree, then check it from the clone
+        run: |
+          set -euo pipefail
+          git clone --quiet . "$RUNNER_TEMP/clone"
+          cd "$RUNNER_TEMP/clone"
+          echo "files in the clone: $(git ls-files | wc -l)"
+          node scripts/refresh-counts.mjs --check
+          bash .claude/hooks/safety-guard-test.sh </dev/null
