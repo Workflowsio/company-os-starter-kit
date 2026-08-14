@@ -440,6 +440,11 @@ esac
 # 2. Read allowlist, only for names that carry no guarded verb at all.
 #    Without it every lookup becomes a prompt and the team disables the gate.
 #
+#    This list is wider than the minimal read set (get, list, search, describe,
+#    read, count, preview, validate) because a narrow one prompts on half the
+#    lookups a GTM stack does. The width is safe only because of the veto above:
+#    widen the allowlist and the veto together, never the allowlist alone.
+#
 #    KNOWN LIMIT: a connector that exposes arbitrary SQL under a bare read name
 #    (`query`, with nothing else in the name to give it away) is indistinguishable
 #    from a lookup here and passes. Names carrying ` sql ` are vetoed above; a
