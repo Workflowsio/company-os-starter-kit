@@ -27,24 +27,9 @@ Three things the old kit taught are now wrong, and each one is wrong for a reaso
 
 **Counts are owned by a script.** The old kit shipped hand-maintained tables with a `{{date}}` in every row, which is a promise to update something nobody updates. Now `scripts/refresh-counts.mjs` measures each mechanical count from disk and rewrites it in place inside a named anchor, `--check` fails when a count has drifted or a file on disk is missing from the catalog, and a CI job runs it on every pull request and on direct pushes. Every hand-maintained count in our own store drifted at once, including two contradictory numbers about 40 lines apart in one file and three different totals in another. A number with no owner is a lie with a delay fuse.
 
-### Where the old paths went
+New in this version: the `clients/` root, the rules layer in `.claude/rules/`, the refresher in `scripts/` with its CI jobs in `.github/workflows/`, and two new root files, `AGENTS.md` and `MEMORY.md`.
 
-| Old path | New path |
-|---|---|
-| `blueprint/company/*.md` | `company-wiki/company/*.md` |
-| `blueprint/wiki/outbound-playbook.md` | `company-wiki/services/outbound/outbound-playbook.md` |
-| `blueprint/wiki/processes.md`, `blueprint/wiki/onboarding.md` | `company-wiki/company/` |
-| `blueprint/company/voice.md`, `design-system.md` | `company-wiki/marketing/` |
-| `gtm-skills/<name>.md` | `.claude/skills/<name>/SKILL.md` |
-| `gtm-skills/guide.md`, `blueprint/skills/guide.md` | one file, `.claude/skills-guide.md` |
-| `plugin/commands/workflows/*.md` | `.claude/commands/workflows/*.md` |
-| `plugin/.claude-plugin/plugin.json`, `PLUGIN-GUIDE.md` | deleted, see above |
-| `blueprint/hooks/*.sh` | `.claude/hooks/*.sh` |
-| `blueprint/hooks/settings.json` | `.claude/settings.json` |
-| `blueprint/INDEX.md` | `INDEX.md` |
-| `blueprint/raw/guide.md`, `blueprint/archive/guide.md` | `raw/guide.md`, `archive/guide.md` |
-
-New in this version: the `clients/` root, the rules layer in `.claude/rules/`, the refresher in `scripts/` with its CI job in `.github/workflows/`, and two new root files, `AGENTS.md` and `MEMORY.md`.
+**`CHANGELOG.md` has the full record**: every old path and where it went, everything removed and the failure that caused it, and every defect found by running the previous tree rather than reading it. Read it before you merge. It is one file rather than a second copy of this section, because a second copy is a second thing to drift.
 
 ---
 
