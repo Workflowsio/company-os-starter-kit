@@ -267,6 +267,15 @@ fi
 # =============================================================================
 # Session modes
 # =============================================================================
+file_mtime() {
+  # GNU form first. On Linux, BSD-style `stat -f %m` means "filesystem status"
+  # with %m read as a filename: it prints a multi-line block to stdout and exits
+  # non-zero, so trying it first corrupts the age arithmetic and every approval
+  # reads as invalid. BSD stat rejects -c with nothing on stdout, so this order
+  # is clean on both.
+  stat -c %Y "$1" 2>/dev/null || stat -f %m "$1" 2>/dev/null || echo 0
+}
+
 sweep_approvals() {
   # $1 = "expired" or "all"
   local removed=0 f
@@ -277,7 +286,7 @@ sweep_approvals() {
       rm -f "$f" && removed=$((removed + 1))
     else
       local age
-      age=$(( $(date +%s) - $(stat -f %m "$f" 2>/dev/null || stat -c %Y "$f" 2>/dev/null || echo 0) ))
+      age=$(( $(date +%s) - $(file_mtime "$f") ))
       if [ "$age" -gt "$TTL" ]; then rm -f "$f" && removed=$((removed + 1)); fi
     fi
   done
@@ -731,7 +740,7 @@ approval_valid() {
   # ignored expired approval reads as the gate malfunctioning.
   local f="$1" age
   [ -f "$f" ] || return 1
-  age=$(( $(date +%s) - $(stat -f %m "$f" 2>/dev/null || stat -c %Y "$f" 2>/dev/null || echo 0) ))
+  age=$(( $(date +%s) - $(file_mtime "$f") ))
   if [ "$age" -gt "$TTL" ]; then
     rm -f "$f"
     EXPIRED_NOTE="An approval for this action was found but had expired, so it was removed. Ask again."
